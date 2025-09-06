@@ -645,8 +645,8 @@ fn renderCode(
         \\    /// should return a pointer to the corresponding function. It should be able to be used in one
         \\    /// of the following two ways:
         \\    ///
-        \\    /// - `@as(?PROC, loader(@as([*:0]const u8, prefixed_name)))`
-        \\    /// - `@as(?PROC, loader.getProcAddress(@as([*:0]const u8, prefixed_name)))`
+        \\    /// - `@as(?PROC, loader(@as([:0]const u8, prefixed_name)))`
+        \\    /// - `@as(?PROC, loader.getProcAddress(@as([:0]const u8, prefixed_name)))`
         \\    ///
         \\    /// If your windowing system has a "get procedure address" function, it is usually enough to
         \\    /// simply pass that function as the `loader` argument.
@@ -748,9 +748,9 @@ fn renderCode(
         \\            loader_info == .@"fn" or
         \\            loader_info == .pointer and @typeInfo(loader_info.pointer.child) == .@"fn";
         \\        if (loader_is_fn) {
-        \\            return @as(?PROC, loader(@as([*:0]const u8, prefixed_name)));
+        \\            return @as(?PROC, loader(@as([:0]const u8, prefixed_name)));
         \\        } else {
-        \\            return @as(?PROC, loader.getProcAddress(@as([*:0]const u8, prefixed_name)));
+        \\            return @as(?PROC, loader.getProcAddress(@as([:0]const u8, prefixed_name)));
         \\        }
         \\    }
         \\
@@ -902,9 +902,9 @@ fn getTypeString(@"type": registry.Type.Name) []const u8 {
         .DEBUGPROC,
         .DEBUGPROCARB,
         .DEBUGPROCKHR,
-        => "*const fn (source: @\"enum\", @\"type\": @\"enum\", id: uint, severity: @\"enum\", length: sizei, message: [*:0]const char, userParam: ?*const anyopaque) callconv(APIENTRY) void",
+        => "*const fn (source: @\"enum\", @\"type\": @\"enum\", id: uint, severity: @\"enum\", length: sizei, message: [:0]const char, userParam: ?*const anyopaque) callconv(APIENTRY) void",
         .DEBUGPROCAMD,
-        => "*const fn (id: uint, category: @\"enum\", severity: @\"enum\", length: sizei, message: [*:0]const char, userParam: ?*anyopaque) callconv(APIENTRY) void",
+        => "*const fn (id: uint, category: @\"enum\", severity: @\"enum\", length: sizei, message: [:0]const char, userParam: ?*anyopaque) callconv(APIENTRY) void",
         .VULKANPROCNV,
         => "*const fn () callconv(APIENTRY) void",
         .bitfield,
@@ -1006,12 +1006,12 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         },
         .BindAttribLocation,
         => switch (param_index) {
-            2 => .{ "name", "[*:0]const char" },
+            2 => .{ "name", "[:0]const char" },
             else => null,
         },
         .BindAttribLocationARB,
         => switch (param_index) {
-            2 => .{ "name", "[*:0]const charARB" },
+            2 => .{ "name", "[:0]const charARB" },
             else => null,
         },
         .BindBuffersBase,
@@ -1029,12 +1029,12 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         .BindFragDataLocation,
         => switch (param_index) {
             1 => .{ "colorNumber", "uint" },
-            2 => .{ "name", "[*:0]const char" },
+            2 => .{ "name", "[:0]const char" },
             else => null,
         },
         .BindFragDataLocationIndexed,
         => switch (param_index) {
-            3 => .{ "name", "[*:0]const char" },
+            3 => .{ "name", "[:0]const char" },
             else => null,
         },
         .BindImageTextures,
@@ -1637,7 +1637,7 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         },
         .CreateShaderProgramv,
         => switch (param_index) {
-            2 => .{ "strings", "[*]const [*:0]const char" },
+            2 => .{ "strings", "[*]const [:0]const char" },
             else => null,
         },
         .CreateSyncFromCLeventARB,
@@ -2102,12 +2102,12 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         },
         .GetAttribLocation,
         => switch (param_index) {
-            1 => .{ "name", "[*:0]const char" },
+            1 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetAttribLocationARB,
         => switch (param_index) {
-            1 => .{ "name", "[*:0]const charARB" },
+            1 => .{ "name", "[:0]const charARB" },
             else => null,
         },
         .GetBooleanv,
@@ -2290,7 +2290,7 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         .GetFragDataLocation,
         .GetFragDataLocationEXT,
         => switch (param_index) {
-            1 => .{ "name", "[*:0]const char" },
+            1 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetFramebufferAttachmentParameteriv,
@@ -2562,7 +2562,7 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         .GetProgramResourceLocation,
         .GetProgramResourceLocationIndex,
         => switch (param_index) {
-            2 => .{ "name", "[*:0]const char" },
+            2 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetProgramResourceName,
@@ -2670,7 +2670,7 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         .GetSubroutineIndex,
         .GetSubroutineUniformLocation,
         => switch (param_index) {
-            2 => .{ "name", "[*:0]const char" },
+            2 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetSynciv,
@@ -2843,23 +2843,23 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         },
         .GetUniformBlockIndex,
         => switch (param_index) {
-            1 => .{ "uniformBlockName", "[*:0]const char" },
+            1 => .{ "uniformBlockName", "[:0]const char" },
             else => null,
         },
         .GetUniformIndices,
         => switch (param_index) {
-            2 => .{ "uniformNames", "[*]const [*:0]const char" },
+            2 => .{ "uniformNames", "[*]const [:0]const char" },
             3 => .{ "uniformIndices", "[*]uint" },
             else => null,
         },
         .GetUniformLocation,
         => switch (param_index) {
-            1 => .{ "name", "[*:0]const char" },
+            1 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetUniformLocationARB,
         => switch (param_index) {
-            1 => .{ "name", "[*:0]const charARB" },
+            1 => .{ "name", "[:0]const charARB" },
             else => null,
         },
         .GetUniformSubroutineuiv,
@@ -2919,7 +2919,7 @@ fn paramOverride(command: registry.Command.Name, param_index: usize) ?struct { [
         },
         .GetVkProcAddrNV,
         => switch (param_index) {
-            0 => .{ "name", "[*:0]const char" },
+            0 => .{ "name", "[:0]const char" },
             else => null,
         },
         .GetnColorTable,
@@ -3291,7 +3291,7 @@ fn returnTypeOverride(command: registry.Command.Name) ?[]const u8 {
         => "?*sync",
         .GetString,
         .GetStringi,
-        => "?[*:0]const ubyte",
+        => "?[:0]const ubyte",
         .GetVkProcAddrNV,
         => "?VULKANPROCNV",
         else => null,
